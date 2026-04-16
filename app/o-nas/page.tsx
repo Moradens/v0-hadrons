@@ -1,5 +1,6 @@
 import { Metadata } from "next"
 import Link from "next/link"
+import Image from "next/image"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { FadeIn } from "@/components/fade-in"
@@ -184,39 +185,43 @@ export default function AboutPage() {
               <FadeIn delay={200} direction="left">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-4">
-                    <div className="aspect-[4/5] rounded-xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3">
-                          <Users className="w-8 h-8 text-primary" />
-                        </div>
-                        <p className="text-sm text-muted-foreground">Náš tým</p>
-                      </div>
+                    <div className="relative aspect-[4/5] rounded-xl overflow-hidden border border-border">
+                      <Image
+                        src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/RD%20Image%204.JPG-dVGuXzVTpwJIu57aVvx0TRJj5r5mwk.jpeg"
+                        alt="Rekonstrukce podkroví"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 1024px) 50vw, 25vw"
+                      />
                     </div>
-                    <div className="aspect-[4/3] rounded-xl bg-gradient-to-br from-primary/15 via-primary/5 to-transparent flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-2">
-                          <Award className="w-6 h-6 text-primary" />
-                        </div>
-                        <p className="text-xs text-muted-foreground">Kvalita</p>
-                      </div>
+                    <div className="relative aspect-[4/3] rounded-xl overflow-hidden border border-border">
+                      <Image
+                        src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Old%202.1.JPG-BpRHveFh5HD4MZmgEc0EiZt9lvAHp0.jpeg"
+                        alt="Elektroinstalace"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 1024px) 50vw, 25vw"
+                      />
                     </div>
                   </div>
                   <div className="space-y-4 mt-8">
-                    <div className="aspect-[4/3] rounded-xl bg-gradient-to-br from-primary/15 via-primary/5 to-transparent flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-2">
-                          <Clock className="w-6 h-6 text-primary" />
-                        </div>
-                        <p className="text-xs text-muted-foreground">Termíny</p>
-                      </div>
+                    <div className="relative aspect-[4/3] rounded-xl overflow-hidden border border-border">
+                      <Image
+                        src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/BD%20Image.JPG-x8HhGMXVLYo0QyVOh68evezkwekngu.jpeg"
+                        alt="LED osvětlení"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 1024px) 50vw, 25vw"
+                      />
                     </div>
-                    <div className="aspect-[4/5] rounded-xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3">
-                          <Shield className="w-8 h-8 text-primary" />
-                        </div>
-                        <p className="text-sm text-muted-foreground">Záruka</p>
-                      </div>
+                    <div className="relative aspect-[4/5] rounded-xl overflow-hidden border border-border">
+                      <Image
+                        src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Fasa%CC%81da%20mala%CC%81%20%281%29.JPG-KliQxH74YnLzcHelef7Mio8zcjiVSw.jpeg"
+                        alt="Dokončená fasáda"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 1024px) 50vw, 25vw"
+                      />
                     </div>
                   </div>
                 </div>

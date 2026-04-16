@@ -1,4 +1,5 @@
 import { Metadata } from "next"
+import Image from "next/image"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { FadeIn } from "@/components/fade-in"
@@ -32,6 +33,7 @@ const services = [
     title: "Kompletní rekonstrukce",
     description:
       "Zajišťujeme kompletní rekonstrukce bytů, domů i komerčních prostor. Od demolice přes hrubé stavební práce až po finální úpravy a dokončení.",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Facade%20Reference.JPG-6e9XsWCAjC4Ng8voVXAYZaD4dd0I42.jpeg",
     features: [
       "Rekonstrukce bytů a bytových jader",
       "Přestavby domů a rodinných domů",
@@ -52,6 +54,7 @@ const services = [
     title: "Elektromontáže",
     description:
       "Provádíme veškeré elektroinstalační práce od nových rozvodů až po revize. Certifikovaní elektrikáři s dlouholetou praxí.",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Old%202.1.JPG-BpRHveFh5HD4MZmgEc0EiZt9lvAHp0.jpeg",
     features: [
       "Nové elektrické rozvody",
       "Rekonstrukce elektroinstalace",
@@ -72,6 +75,7 @@ const services = [
     title: "Sádrokartony",
     description:
       "Profesionální sádrokartonové konstrukce - příčky, podhledy, obklady. Přesné provedení a čisté zpracování.",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/BD%20Image.JPG-x8HhGMXVLYo0QyVOh68evezkwekngu.jpeg",
     features: [
       "Sádrokartonové příčky",
       "Zavěšené podhledy",
@@ -92,6 +96,7 @@ const services = [
     title: "Zednické práce",
     description:
       "Tradiční zednické řemeslo na profesionální úrovni. Omítky, stěrky, zdění a další zednické práce.",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Fasa%CC%81da%20mala%CC%81%20%281%29.JPG-KliQxH74YnLzcHelef7Mio8zcjiVSw.jpeg",
     features: [
       "Vnitřní a vnější omítky",
       "Stěrky a vyrovnání stěn",
@@ -182,31 +187,40 @@ export default function ServicesPage() {
                       </Button>
                     </div>
 
-                    {/* Right: Features */}
-                    <Card
-                      className={`border-border ${
-                        index % 2 === 1 ? "lg:order-1" : ""
-                      }`}
-                    >
-                      <CardContent className="p-6 lg:p-8">
-                        <h3 className="font-semibold mb-6 text-lg">
-                          Co zahrnuje
-                        </h3>
-                        <ul className="space-y-4">
-                          {service.features.map((feature) => (
-                            <li
-                              key={feature}
-                              className="flex items-start gap-3"
-                            >
-                              <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                              <span className="text-muted-foreground">
-                                {feature}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      </CardContent>
-                    </Card>
+                    {/* Right: Features & Image */}
+                    <div className={`space-y-6 ${index % 2 === 1 ? "lg:order-1" : ""}`}>
+                      {/* Service Image */}
+                      <div className="relative aspect-[16/10] rounded-xl overflow-hidden border border-border">
+                        <Image
+                          src={service.image}
+                          alt={service.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 1024px) 100vw, 50vw"
+                        />
+                      </div>
+                      
+                      <Card className="border-border">
+                        <CardContent className="p-6 lg:p-8">
+                          <h3 className="font-semibold mb-6 text-lg">
+                            Co zahrnuje
+                          </h3>
+                          <ul className="space-y-4">
+                            {service.features.map((feature) => (
+                              <li
+                                key={feature}
+                                className="flex items-start gap-3"
+                              >
+                                <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                                <span className="text-muted-foreground">
+                                  {feature}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </CardContent>
+                      </Card>
+                    </div>
                   </div>
                 </FadeIn>
               ))}

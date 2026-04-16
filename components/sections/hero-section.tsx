@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { ArrowRight, Play } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AnimatedCounter } from "@/components/animated-counter"
@@ -15,13 +16,20 @@ const stats = [
 export function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center bg-hadrons-dark overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_25%,rgba(184,90,48,0.1)_25%,rgba(184,90,48,0.1)_50%,transparent_50%,transparent_75%,rgba(184,90,48,0.1)_75%)] bg-[length:60px_60px]" />
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <Image
+          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Facade%20Reference.JPG-6e9XsWCAjC4Ng8voVXAYZaD4dd0I42.jpeg"
+          alt="Rekonstrukce rodinného domu"
+          fill
+          className="object-cover opacity-20"
+          priority
+          sizes="100vw"
+        />
       </div>
       
       {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-hadrons-dark via-hadrons-dark to-hadrons-dark/90" />
+      <div className="absolute inset-0 bg-gradient-to-r from-hadrons-dark via-hadrons-dark/95 to-hadrons-dark/80" />
       
       <div className="container mx-auto px-4 lg:px-8 pt-24 lg:pt-32 pb-16 relative z-10">
         <div className="max-w-4xl">

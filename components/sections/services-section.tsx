@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { ArrowRight, Zap, Grid3x3, Hammer, Home } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -13,6 +14,7 @@ const services = [
     description:
       "Byty, domy, komerční prostory. Koupelny, kuchyně, bytová jádra. Vše od návrhu po realizaci.",
     href: "/sluzby#rekonstrukce",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Facade%20Reference.JPG-6e9XsWCAjC4Ng8voVXAYZaD4dd0I42.jpeg",
   },
   {
     icon: Zap,
@@ -20,6 +22,7 @@ const services = [
     description:
       "Nové instalace, rekonstrukce rozvodů, rozvaděče, revize. Certifikovaní elektrikáři.",
     href: "/sluzby#elektro",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Old%202.1.JPG-BpRHveFh5HD4MZmgEc0EiZt9lvAHp0.jpeg",
   },
   {
     icon: Grid3x3,
@@ -27,6 +30,7 @@ const services = [
     description:
       "Příčky, podhledy, zakrytí instalací, designové prvky. Přesné a čisté provedení.",
     href: "/sluzby#sadrokartony",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/BD%20Image.JPG-x8HhGMXVLYo0QyVOh68evezkwekngu.jpeg",
   },
   {
     icon: Hammer,
@@ -34,6 +38,7 @@ const services = [
     description:
       "Omítky, stěrky, zdění příček, vyrovnání stěn a podlah. Tradiční řemeslo na profesionální úrovni.",
     href: "/sluzby#zdeni",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Fasa%CC%81da%20mala%CC%81%20%281%29.JPG-KliQxH74YnLzcHelef7Mio8zcjiVSw.jpeg",
   },
 ]
 
@@ -58,23 +63,35 @@ export function ServicesSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
           {services.map((service, index) => (
             <FadeIn key={service.title} delay={index * 100}>
-              <Card className="group h-full border-border hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
-                <CardContent className="p-6 lg:p-8">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
-                      <service.icon className="w-6 h-6 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
-                        {service.title}
-                      </h3>
-                      <p className="text-muted-foreground text-sm leading-relaxed">
-                        {service.description}
-                      </p>
+              <Link href={service.href}>
+                <Card className="group h-full border-border hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 overflow-hidden">
+                  <div className="relative aspect-[16/9]">
+                    <Image
+                      src={service.image}
+                      alt={service.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-primary/90 flex items-center justify-center shrink-0">
+                          <service.icon className="w-5 h-5 text-white" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-white">
+                          {service.title}
+                        </h3>
+                      </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                  <CardContent className="p-5">
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      {service.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
             </FadeIn>
           ))}
         </div>

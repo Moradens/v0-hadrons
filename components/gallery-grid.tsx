@@ -84,20 +84,14 @@ export function GalleryGrid({ projects, categories }: GalleryGridProps) {
               onClick={() => setSelectedProject(project)}
               className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-secondary border border-border hover:border-primary/30 transition-all duration-300 w-full text-left"
             >
-              {/* Placeholder gradient - will be replaced by real images */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center p-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3">
-                    <span className="text-primary font-semibold text-lg">
-                      {project.id}
-                    </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {project.category}
-                  </p>
-                </div>
-              </div>
+              {/* Project Image */}
+              <Image
+                src={project.image}
+                alt={project.title}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              />
 
               {/* Hover Overlay */}
               <div className="absolute inset-0 bg-hadrons-dark/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
@@ -131,18 +125,13 @@ export function GalleryGrid({ projects, categories }: GalleryGridProps) {
             <div className="relative">
               {/* Image Container */}
               <div className="relative aspect-[16/10] bg-hadrons-dark">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4">
-                      <span className="text-primary font-bold text-3xl">
-                        {selectedProject.id}
-                      </span>
-                    </div>
-                    <p className="text-muted-foreground">
-                      Náhled projektu
-                    </p>
-                  </div>
-                </div>
+                <Image
+                  src={selectedProject.image}
+                  alt={selectedProject.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 896px) 100vw, 896px"
+                />
               </div>
 
               {/* Navigation Arrows */}
