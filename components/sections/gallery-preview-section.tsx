@@ -56,7 +56,7 @@ export function GalleryPreviewSection() {
                 Z našeho portfolia
               </h2>
             </div>
-            <Button variant="outline" asChild className="group border-white/20 text-white hover:bg-white/10 hover:text-white w-fit">
+            <Button variant="outline" asChild className="group border-white/20 text-black hover:bg-white/10 hover:text-black w-fit bg-white/80" style={{ color: "#000000" }}>
               <Link href="/galerie">
                 Zobrazit vše
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
