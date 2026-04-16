@@ -100,6 +100,7 @@ export function CTASection() {
                   variant="outline"
                   asChild
                   className="border-hadrons-cream/30 text-hadrons-cream hover:bg-hadrons-cream/10 hover:text-hadrons-cream flex-1"
+                  style={{ backgroundColor: "#0d0d0d" }}
                 >
                   <a href="tel:+420602384239">
                     <Phone className="mr-2 h-4 w-4" />
