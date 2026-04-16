@@ -44,8 +44,12 @@ const services = [
 
 export function ServicesSection() {
   return (
-    <section className="py-20 lg:py-28 bg-background">
-      <div className="container mx-auto px-4 lg:px-8">
+    <section className="py-20 lg:py-28 bg-white relative overflow-hidden">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-[0.02]">
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,_rgb(0,0,0)_25%,_transparent_25%,_transparent_75%,_rgb(0,0,0)_75%)] bg-[length:60px_60px]" />
+      </div>
+      <div className="container mx-auto px-4 lg:px-8 relative z-10">
         <FadeIn>
           <div className="max-w-2xl mb-12 lg:mb-16">
             <span className="text-xs font-semibold tracking-widest uppercase text-primary mb-4 block">

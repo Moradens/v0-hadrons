@@ -36,8 +36,12 @@ const testimonials = [
 
 export function TestimonialsSection() {
   return (
-    <section className="py-20 lg:py-28 bg-background">
-      <div className="container mx-auto px-4 lg:px-8">
+    <section className="py-20 lg:py-28 bg-white relative overflow-hidden">
+      {/* Subtle decorative elements */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-amber-100/50 to-transparent rounded-full -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-primary/5 to-transparent rounded-full translate-y-1/2 -translate-x-1/2" />
+      
+      <div className="container mx-auto px-4 lg:px-8 relative z-10">
         <FadeIn>
           <div className="max-w-2xl mb-12 lg:mb-16">
             <span className="text-xs font-semibold tracking-widest uppercase text-primary mb-4 block">
@@ -52,18 +56,32 @@ export function TestimonialsSection() {
           </div>
         </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {testimonials.map((testimonial, index) => (
             <FadeIn key={testimonial.name} delay={index * 100}>
-              <Card className="h-full border-border hover:shadow-lg transition-shadow duration-300">
+              <Card className="h-full border-border/50 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 bg-gradient-to-br from-white to-stone-50/50">
                 <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-4">
+                  {/* Stars at top */}
+                  <div className="flex gap-0.5 mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="w-5 h-5 fill-amber-400 text-amber-400"
+                      />
+                    ))}
+                  </div>
+                  
+                  <blockquote className="text-foreground leading-relaxed mb-6">
+                    &ldquo;{testimonial.text}&rdquo;
+                  </blockquote>
+                  
+                  <div className="flex items-center justify-between pt-4 border-t border-border/50">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center text-primary font-semibold text-sm">
+                      <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-semibold text-sm">
                         {testimonial.initials}
                       </div>
                       <div>
-                        <h4 className="font-semibold text-sm">
+                        <h4 className="font-semibold text-sm text-foreground">
                           {testimonial.name}
                         </h4>
                         <p className="text-xs text-muted-foreground">
@@ -71,24 +89,13 @@ export function TestimonialsSection() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex gap-0.5">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className="w-4 h-4 fill-amber-400 text-amber-400"
-                        />
-                      ))}
-                    </div>
+                    <Badge
+                      variant="secondary"
+                      className="bg-primary/10 text-primary border-0 text-xs"
+                    >
+                      {testimonial.tag}
+                    </Badge>
                   </div>
-                  <blockquote className="text-muted-foreground text-sm leading-relaxed italic mb-4">
-                    &ldquo;{testimonial.text}&rdquo;
-                  </blockquote>
-                  <Badge
-                    variant="secondary"
-                    className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20"
-                  >
-                    {testimonial.tag}
-                  </Badge>
                 </CardContent>
               </Card>
             </FadeIn>
