@@ -68,6 +68,27 @@ const projects = [
     description: "Kompletní rekonstrukce podkroví - izolace, SDK a příprava elektro",
     image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/RD%20Image%204.JPG-dVGuXzVTpwJIu57aVvx0TRJj5r5mwk.jpeg",
   },
+  {
+    id: 9,
+    title: "Sekání drážek v hallu bytového domu",
+    category: "Elektromontáže",
+    description: "Příprava elektroinstalace - sekání drážek pro rozvody v hallu",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Seka%CC%81ni%CC%81%20Old%20Mar%2011%202026-SONOPx3yiFDQyiy5d6hJeb0enQlDnu.jpg",
+  },
+  {
+    id: 10,
+    title: "Elektroinstalace - příprava rozvodů",
+    category: "Elektromontáže",
+    description: "Sekání a začištění drážek pro elektrorozvody v hale bytového domu",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Ke%20Krc%CC%8Ci%20Seka%CC%81ni%CC%81%20a%20Zac%CC%8Cis%CC%8Cte%CC%8Cni%CC%81-PKe6rsziMKaLNzRr9isizS0eEmjAGk.jpeg",
+  },
+  {
+    id: 11,
+    title: "Hotový hall s připravenými rozvody",
+    category: "Elektromontáže",
+    description: "Finální příprava elektroinstalace - osekané a vyčištěné drážky",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Seka%CC%81ni%CC%81%20Old%20Mar%2012%202026-ylp2nG2dg9ATrcUH09P9FgKEqMLWXc.jpg",
+  },
 ]
 
 const categories = [
