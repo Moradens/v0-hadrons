@@ -15,21 +15,21 @@ const stats = [
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center bg-hadrons-dark overflow-hidden">
+    <section className="relative min-h-screen flex items-center bg-background overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
           src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Facade%20Reference.JPG-6e9XsWCAjC4Ng8voVXAYZaD4dd0I42.jpeg"
           alt="Rekonstrukce rodinného domu"
           fill
-          className="object-cover opacity-20"
+          className="object-cover opacity-15"
           priority
           sizes="100vw"
         />
       </div>
       
       {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-hadrons-dark via-hadrons-dark/95 to-hadrons-dark/80" />
+      <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/80" />
       
       <div className="container mx-auto px-4 lg:px-8 pt-24 lg:pt-32 pb-16 relative z-10">
         <div className="max-w-4xl">
@@ -42,7 +42,7 @@ export function HeroSection() {
           </FadeIn>
 
           <FadeIn delay={200}>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-semibold text-hadrons-cream leading-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-semibold text-foreground leading-tight mb-6">
               Rekonstrukce,
               <br />
               <span className="text-balance">
@@ -84,8 +84,6 @@ export function HeroSection() {
                 size="lg"
                 variant="outline"
                 asChild
-                className="border-hadrons-cream/30 text-hadrons-cream hover:bg-hadrons-cream/10 hover:text-hadrons-cream"
-                style={{ backgroundColor: "#1c1c1c" }}
               >
                 <Link href="/galerie">
                   <Play className="mr-2 h-4 w-4" />
@@ -96,10 +94,10 @@ export function HeroSection() {
           </FadeIn>
 
           <FadeIn delay={500}>
-            <div className="flex flex-wrap gap-8 lg:gap-12 pt-8 border-t border-white/10">
+            <div className="flex flex-wrap gap-8 lg:gap-12 pt-8 border-t border-border">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center sm:text-left">
-                  <div className="text-3xl lg:text-4xl font-semibold text-hadrons-cream">
+                  <div className="text-3xl lg:text-4xl font-semibold text-foreground">
                     <AnimatedCounter end={stat.value} suffix={stat.suffix} />
                   </div>
                   <div className="text-sm text-muted-foreground mt-1">
@@ -113,8 +111,8 @@ export function HeroSection() {
       </div>
 
       {/* Decorative Elements */}
-      <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
+      <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
     </section>
   )
 }

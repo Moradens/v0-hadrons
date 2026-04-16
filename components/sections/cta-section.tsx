@@ -27,10 +27,10 @@ const contactInfo = [
 
 export function CTASection() {
   return (
-    <section className="py-20 lg:py-28 bg-hadrons-dark relative overflow-hidden">
+    <section className="py-20 lg:py-28 bg-primary relative overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(184,90,48,0.3),transparent_50%)]" />
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.3),transparent_50%)]" />
       </div>
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
@@ -38,13 +38,13 @@ export function CTASection() {
           {/* Left: Content */}
           <FadeIn>
             <div>
-              <span className="text-xs font-semibold tracking-widest uppercase text-primary mb-4 block">
+              <span className="text-xs font-semibold tracking-widest uppercase text-white/80 mb-4 block">
                 Kontakt
               </span>
-              <h2 className="text-3xl lg:text-4xl font-semibold mb-4 text-hadrons-cream">
+              <h2 className="text-3xl lg:text-4xl font-semibold mb-4 text-white">
                 Napište nám
               </h2>
-              <p className="text-muted-foreground text-lg leading-relaxed mb-8">
+              <p className="text-white/80 text-lg leading-relaxed mb-8">
                 Připravíme vám nezávaznou nabídku. Odpovíme do 24 hodin.
               </p>
 
@@ -52,22 +52,22 @@ export function CTASection() {
                 {contactInfo.map((item, index) => (
                   <FadeIn key={item.label} delay={index * 100}>
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
-                        <item.icon className="w-5 h-5 text-primary" />
+                      <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                        <item.icon className="w-5 h-5 text-white" />
                       </div>
                       <div>
-                        <span className="text-xs text-muted-foreground block">
+                        <span className="text-xs text-white/70 block">
                           {item.label}
                         </span>
                         {item.href ? (
                           <a
                             href={item.href}
-                            className="text-hadrons-cream font-medium hover:text-primary transition-colors"
+                            className="text-white font-medium hover:text-white/80 transition-colors"
                           >
                             {item.value}
                           </a>
                         ) : (
-                          <span className="text-hadrons-cream font-medium">
+                          <span className="text-white font-medium">
                             {item.value}
                           </span>
                         )}
@@ -81,15 +81,15 @@ export function CTASection() {
 
           {/* Right: CTA Card */}
           <FadeIn delay={200} direction="left">
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 lg:p-10">
-              <h3 className="text-xl font-semibold text-hadrons-cream mb-4">
+            <div className="bg-white rounded-2xl p-8 lg:p-10 shadow-xl">
+              <h3 className="text-xl font-semibold text-foreground mb-4">
                 Máte projekt na mysli?
               </h3>
               <p className="text-muted-foreground mb-6 leading-relaxed">
                 Rádi vám pomůžeme s plánováním a realizací vaší rekonstrukce. Kontaktujte nás pro bezplatnou konzultaci.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" asChild className="group flex-1">
+                <Button size="lg" asChild className="group flex-1 bg-primary hover:bg-primary/90">
                   <Link href="/kontakt">
                     Odeslat poptávku
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -99,8 +99,7 @@ export function CTASection() {
                   size="lg"
                   variant="outline"
                   asChild
-                  className="border-hadrons-cream/30 text-hadrons-cream hover:bg-hadrons-cream/10 hover:text-hadrons-cream flex-1"
-                  style={{ backgroundColor: "#0d0d0d" }}
+                  className="flex-1"
                 >
                   <a href="tel:+420602384239">
                     <Phone className="mr-2 h-4 w-4" />
