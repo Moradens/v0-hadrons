@@ -77,6 +77,7 @@ export function HeroSection() {
                 variant="outline"
                 asChild
                 className="border-hadrons-cream/30 text-hadrons-cream hover:bg-hadrons-cream/10 hover:text-hadrons-cream"
+                style={{ backgroundColor: "#1c1c1c" }}
               >
                 <Link href="/galerie">
                   <Play className="mr-2 h-4 w-4" />
