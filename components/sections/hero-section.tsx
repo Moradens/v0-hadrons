@@ -125,7 +125,7 @@ export function HeroSection() {
                     </svg>
                   </div>
                   <div>
-                    <div className="font-semibold text-foreground">120+ projektů</div>
+                    <div className="font-semibold text-foreground">50+ projektů</div>
                     <div className="text-sm text-muted-foreground">úspěšně dokončeno</div>
                   </div>
                 </div>
