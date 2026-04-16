@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select"
 import { Field, FieldLabel, FieldGroup } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
-import { CheckCircle2, Send } from "lucide-react"
+import { CheckCircle2, Send, AlertCircle } from "lucide-react"
 
 const serviceOptions = [
   { value: "rekonstrukce", label: "Kompletní rekonstrukce" },
@@ -27,16 +27,60 @@ const serviceOptions = [
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [error, setError] = useState("")
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    message: "",
+  })
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleSelectChange = (value: string) => {
+    setFormData(prev => ({ ...prev, company: value }))
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setError("")
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      const response = await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
 
-    setIsSubmitting(false)
-    setIsSubmitted(true)
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || "Chyba při odesílání poptávky")
+        setIsSubmitting(false)
+        return
+      }
+
+      setIsSubmitting(false)
+      setIsSubmitted(true)
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        company: "",
+        message: "",
+      })
+    } catch (err) {
+      console.error("[v0] Form error:", err)
+      setError("Chyba při odesílání poptávky. Zkuste později.")
+      setIsSubmitting(false)
+    }
   }
 
   if (isSubmitted) {
@@ -60,6 +104,13 @@ export function ContactForm() {
       <CardContent className="p-6 lg:p-8">
         <form onSubmit={handleSubmit}>
           <FieldGroup>
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field>
                 <FieldLabel htmlFor="name">Jméno a příjmení *</FieldLabel>
@@ -67,6 +118,8 @@ export function ContactForm() {
                   id="name"
                   name="name"
                   placeholder="Jan Novák"
+                  value={formData.name}
+                  onChange={handleChange}
                   required
                 />
               </Field>
@@ -77,6 +130,8 @@ export function ContactForm() {
                   name="phone"
                   type="tel"
                   placeholder="+420 123 456 789"
+                  value={formData.phone}
+                  onChange={handleChange}
                   required
                 />
               </Field>
@@ -89,13 +144,15 @@ export function ContactForm() {
                 name="email"
                 type="email"
                 placeholder="jan.novak@email.cz"
+                value={formData.email}
+                onChange={handleChange}
                 required
               />
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="service">O jakou službu máte zájem?</FieldLabel>
-              <Select name="service">
+              <FieldLabel htmlFor="company">O jakou službu máte zájem?</FieldLabel>
+              <Select value={formData.company} onValueChange={handleSelectChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Vyberte službu" />
                 </SelectTrigger>
@@ -116,6 +173,8 @@ export function ContactForm() {
                 name="message"
                 placeholder="Popište prosím váš projekt - co potřebujete, kde se nachází objekt, přibližný rozsah prací..."
                 rows={5}
+                value={formData.message}
+                onChange={handleChange}
                 required
               />
             </Field>
