@@ -1,0 +1,95 @@
+"use client"
+
+import Link from "next/link"
+import { ArrowRight, Zap, Grid3x3, Hammer, Home } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { FadeIn } from "@/components/fade-in"
+
+const services = [
+  {
+    icon: Home,
+    title: "Kompletní rekonstrukce",
+    description:
+      "Byty, domy, komerční prostory. Koupelny, kuchyně, bytová jádra. Vše od návrhu po realizaci.",
+    href: "/sluzby#rekonstrukce",
+  },
+  {
+    icon: Zap,
+    title: "Elektromontáže",
+    description:
+      "Nové instalace, rekonstrukce rozvodů, rozvaděče, revize. Certifikovaní elektrikáři.",
+    href: "/sluzby#elektro",
+  },
+  {
+    icon: Grid3x3,
+    title: "Sádrokartony",
+    description:
+      "Příčky, podhledy, zakrytí instalací, designové prvky. Přesné a čisté provedení.",
+    href: "/sluzby#sadrokartony",
+  },
+  {
+    icon: Hammer,
+    title: "Zednické práce",
+    description:
+      "Omítky, stěrky, zdění příček, vyrovnání stěn a podlah. Tradiční řemeslo na profesionální úrovni.",
+    href: "/sluzby#zdeni",
+  },
+]
+
+export function ServicesSection() {
+  return (
+    <section className="py-20 lg:py-28 bg-background">
+      <div className="container mx-auto px-4 lg:px-8">
+        <FadeIn>
+          <div className="max-w-2xl mb-12 lg:mb-16">
+            <span className="text-xs font-semibold tracking-widest uppercase text-primary mb-4 block">
+              Co nabízíme
+            </span>
+            <h2 className="text-3xl lg:text-4xl font-semibold mb-4 text-foreground">
+              Naše služby
+            </h2>
+            <p className="text-muted-foreground text-lg leading-relaxed">
+              Vše potřebné pod jednou střechou — bez nutnosti koordinovat více dodavatelů.
+            </p>
+          </div>
+        </FadeIn>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+          {services.map((service, index) => (
+            <FadeIn key={service.title} delay={index * 100}>
+              <Card className="group h-full border-border hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
+                <CardContent className="p-6 lg:p-8">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                      <service.icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                        {service.title}
+                      </h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        {service.description}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </FadeIn>
+          ))}
+        </div>
+
+        <FadeIn delay={400}>
+          <div className="mt-10 text-center">
+            <Button variant="outline" asChild className="group">
+              <Link href="/sluzby">
+                Zobrazit všechny služby
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </Button>
+          </div>
+        </FadeIn>
+      </div>
+    </section>
+  )
+}
