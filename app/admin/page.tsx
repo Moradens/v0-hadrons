@@ -1,17 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
 import { AlertCircle, Lock } from "lucide-react"
-import { login } from "@/lib/actions"
 
 export default function AdminLoginPage() {
-  const router = useRouter()
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -22,13 +19,18 @@ export default function AdminLoginPage() {
     setError("")
 
     try {
-      const result = await login(password)
-      
-      if (result.success) {
-        router.refresh()
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
         window.location.href = "/admin/dashboard"
       } else {
-        setError(result.error || "Přihlášení selhalo")
+        setError(data.error || "Přihlášení selhalo")
         setIsLoading(false)
       }
     } catch (err) {
