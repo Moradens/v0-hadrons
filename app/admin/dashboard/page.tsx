@@ -1,14 +1,16 @@
 import { redirect } from "next/navigation"
+import { cookies } from "next/headers"
 import Link from "next/link"
-import { checkAuth, getProjects, getGalleryImages } from "@/lib/actions"
+import { getProjects, getGalleryImages } from "@/lib/actions"
 import { AdminSidebar } from "@/components/admin/admin-sidebar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { FolderKanban, Images, ArrowRight, Plus } from "lucide-react"
 
 export default async function DashboardPage() {
-  const isAuthenticated = await checkAuth()
-  
+  const cookieStore = await cookies()
+  const isAuthenticated = cookieStore.get("admin_session")?.value === "authenticated"
+
   if (!isAuthenticated) {
     redirect("/admin")
   }
@@ -38,9 +40,8 @@ export default async function DashboardPage() {
   return (
     <div className="flex min-h-screen">
       <AdminSidebar />
-      
+
       <main className="flex-1 ml-64">
-        {/* Header */}
         <header className="bg-white border-b border-border px-8 py-6">
           <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
           <p className="text-muted-foreground mt-1">
@@ -48,9 +49,7 @@ export default async function DashboardPage() {
           </p>
         </header>
 
-        {/* Content */}
         <div className="p-8">
-          {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {stats.map((stat) => (
               <Card key={stat.title} className="hover:shadow-md transition-shadow">
@@ -65,7 +64,7 @@ export default async function DashboardPage() {
                 <CardContent>
                   <div className="text-3xl font-bold text-foreground">{stat.value}</div>
                   <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
-                  <Link 
+                  <Link
                     href={stat.href}
                     className="inline-flex items-center text-sm text-primary hover:underline mt-3"
                   >
@@ -77,7 +76,6 @@ export default async function DashboardPage() {
             ))}
           </div>
 
-          {/* Quick Actions */}
           <Card>
             <CardHeader>
               <CardTitle>Rychlé akce</CardTitle>
@@ -104,7 +102,6 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
 
-          {/* Recent Projects */}
           <Card className="mt-6">
             <CardHeader>
               <CardTitle>Poslední projekty</CardTitle>
@@ -116,12 +113,12 @@ export default async function DashboardPage() {
               ) : (
                 <div className="space-y-3">
                   {projects.slice(0, 5).map((project) => (
-                    <div 
+                    <div
                       key={project.id}
                       className="flex items-center justify-between p-3 rounded-lg bg-stone-50 hover:bg-stone-100 transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <div 
+                        <div
                           className="w-12 h-12 rounded-lg bg-cover bg-center"
                           style={{ backgroundImage: `url(${project.image})` }}
                         />

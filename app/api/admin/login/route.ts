@@ -13,19 +13,18 @@ export async function POST(request: Request) {
       )
     }
 
-    // Create response and set cookie on it directly
     const response = NextResponse.json({ success: true })
-    
+
     response.cookies.set("admin_session", "authenticated", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24, // 24 hours
+      maxAge: 60 * 60 * 24,
       path: "/",
     })
 
     return response
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: "Chyba serveru" },
       { status: 500 }

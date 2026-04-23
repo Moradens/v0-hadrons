@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,30 +8,49 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
 import { AlertCircle, Lock } from "lucide-react"
-import { login } from "@/lib/actions"
 
 export default function AdminLoginPage() {
   const router = useRouter()
+
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
-  const [isPending, startTransition] = useTransition()
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setError("")
 
-    startTransition(async () => {
-      const result = await login(password)
-      
-      if (result.success) {
-        // Force router to refresh and pick up new cookie state
-        router.refresh()
-        // Then navigate
-        router.push("/admin/dashboard")
-      } else {
-        setError(result.error || "Přihlášení selhalo")
+    if (!password.trim()) {
+      setError("Zadejte heslo")
+      return
+    }
+
+    setError("")
+    setIsLoading(true)
+
+    try {
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ password }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        setError(data.error || "Přihlášení selhalo")
+        return
       }
-    })
+
+      router.push("/admin/dashboard")
+      router.refresh()
+    } catch {
+      setError("Při přihlašování došlo k chybě")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -46,15 +65,16 @@ export default function AdminLoginPage() {
             Přihlaste se pro přístup do administrace
           </CardDescription>
         </CardHeader>
+
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-center gap-2 text-sm text-red-700">
                 <AlertCircle className="w-4 h-4 shrink-0" />
-                {error}
+                <span>{error}</span>
               </div>
             )}
-            
+
             <Field>
               <FieldLabel htmlFor="password">Heslo</FieldLabel>
               <div className="relative">
@@ -66,13 +86,15 @@ export default function AdminLoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Zadejte heslo"
                   className="pl-10"
+                  autoComplete="current-password"
+                  disabled={isLoading}
                   required
                 />
               </div>
             </Field>
 
-            <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? (
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
                 <>
                   <Spinner className="mr-2" />
                   Přihlašuji...
