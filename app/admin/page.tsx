@@ -19,7 +19,10 @@ export default function AdminLoginPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
+    console.log("1. submit běží")
+
     if (!password.trim()) {
+      console.log("2. heslo je prázdné")
       setError("Zadejte heslo")
       return
     }
@@ -28,6 +31,8 @@ export default function AdminLoginPage() {
     setIsLoading(true)
 
     try {
+      console.log("3. posílám request na /api/admin/login")
+
       const response = await fetch("/api/admin/login", {
         method: "POST",
         headers: {
@@ -37,16 +42,22 @@ export default function AdminLoginPage() {
         body: JSON.stringify({ password }),
       })
 
+      console.log("4. status:", response.status)
+
       const data = await response.json()
+      console.log("5. data:", data)
 
       if (!response.ok || !data.success) {
+        console.log("6. login neprošel")
         setError(data.error || "Přihlášení selhalo")
         return
       }
 
+      console.log("7. login OK, jdu na dashboard")
       router.push("/admin/dashboard")
       router.refresh()
-    } catch {
+    } catch (error) {
+      console.error("8. chyba ve fetch:", error)
       setError("Při přihlašování došlo k chybě")
     } finally {
       setIsLoading(false)
@@ -60,6 +71,7 @@ export default function AdminLoginPage() {
           <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl font-bold text-white">H</span>
           </div>
+
           <CardTitle className="text-2xl">Hadrons Admin</CardTitle>
           <CardDescription>
             Přihlaste se pro přístup do administrace
