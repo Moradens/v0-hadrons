@@ -1,46 +1,37 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
 import { AlertCircle, Lock } from "lucide-react"
+import { login } from "@/lib/actions"
 
 export default function AdminLoginPage() {
+  const router = useRouter()
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [isPending, startTransition] = useTransition()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
     setError("")
 
-    try {
-      const response = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-        credentials: "include",
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        // Small delay then full page reload to pick up cookie
-        setTimeout(() => {
-          window.location.href = "/admin/dashboard"
-        }, 100)
+    startTransition(async () => {
+      const result = await login(password)
+      
+      if (result.success) {
+        // Force router to refresh and pick up new cookie state
+        router.refresh()
+        // Then navigate
+        router.push("/admin/dashboard")
       } else {
-        setError(data.error || "Přihlášení selhalo")
-        setIsLoading(false)
+        setError(result.error || "Přihlášení selhalo")
       }
-    } catch (err) {
-      setError("Chyba při přihlašování")
-      setIsLoading(false)
-    }
+    })
   }
 
   return (
@@ -80,8 +71,8 @@ export default function AdminLoginPage() {
               </div>
             </Field>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
+            <Button type="submit" className="w-full" disabled={isPending}>
+              {isPending ? (
                 <>
                   <Spinner className="mr-2" />
                   Přihlašuji...

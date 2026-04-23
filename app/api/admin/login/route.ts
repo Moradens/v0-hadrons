@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { cookies } from "next/headers"
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "hadrons2024"
 
@@ -14,9 +13,10 @@ export async function POST(request: Request) {
       )
     }
 
-    // Use cookies() from next/headers for reliable cookie setting
-    const cookieStore = await cookies()
-    cookieStore.set("admin_session", "authenticated", {
+    // Create response and set cookie on it directly
+    const response = NextResponse.json({ success: true })
+    
+    response.cookies.set("admin_session", "authenticated", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -24,9 +24,8 @@ export async function POST(request: Request) {
       path: "/",
     })
 
-    return NextResponse.json({ success: true })
+    return response
   } catch (error) {
-    console.error("Login error:", error)
     return NextResponse.json(
       { success: false, error: "Chyba serveru" },
       { status: 500 }

@@ -16,7 +16,9 @@ export async function login(password: string): Promise<{ success: boolean; error
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 60 * 60 * 24, // 24 hours
+      path: "/",
     })
+    revalidatePath("/admin")
     return { success: true }
   }
   return { success: false, error: "Nesprávné heslo" }
