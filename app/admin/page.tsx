@@ -21,15 +21,20 @@ export default function AdminLoginPage() {
     setIsLoading(true)
     setError("")
 
-    const result = await login(password)
-    
-    if (result.success) {
-      router.push("/admin/dashboard")
-    } else {
-      setError(result.error || "Přihlášení selhalo")
+    try {
+      const result = await login(password)
+      
+      if (result.success) {
+        router.refresh()
+        window.location.href = "/admin/dashboard"
+      } else {
+        setError(result.error || "Přihlášení selhalo")
+        setIsLoading(false)
+      }
+    } catch (err) {
+      setError("Chyba při přihlašování")
+      setIsLoading(false)
     }
-    
-    setIsLoading(false)
   }
 
   return (
