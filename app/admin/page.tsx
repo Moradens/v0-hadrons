@@ -19,33 +19,25 @@ export default function AdminLoginPage() {
     setError("")
 
     try {
-      console.log("[v0] Submitting login form with password:", password ? "****" : "empty")
-
       const response = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
-        credentials: "include", // Important for cookies
+        credentials: "include",
       })
 
-      console.log("[v0] Login response status:", response.status)
-      console.log("[v0] Login response cookies:", response.headers.get("set-cookie"))
-
       const data = await response.json()
-      console.log("[v0] Login response data:", data)
 
       if (data.success) {
-        console.log("[v0] Login successful, redirecting to dashboard")
-        // Add small delay to ensure cookie is set
-        await new Promise(resolve => setTimeout(resolve, 500))
-        window.location.href = "/admin/dashboard"
+        // Small delay then full page reload to pick up cookie
+        setTimeout(() => {
+          window.location.href = "/admin/dashboard"
+        }, 100)
       } else {
-        console.log("[v0] Login failed:", data.error)
         setError(data.error || "Přihlášení selhalo")
         setIsLoading(false)
       }
     } catch (err) {
-      console.error("[v0] Login error:", err)
       setError("Chyba při přihlašování")
       setIsLoading(false)
     }
