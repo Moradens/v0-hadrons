@@ -66,14 +66,12 @@ export function GalleryPreviewSection() {
         </FadeIn>
 
         {/* Gallery Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 md:auto-rows-max gap-3 lg:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 lg:gap-4">
           {galleryImages.map((image, index) => (
             <FadeIn key={image.alt} delay={index * 50}>
               <Link 
                 href="/galerie"
-                className={`group relative block overflow-hidden rounded-xl ${
-                  index === 0 ? "md:row-span-2 aspect-square md:aspect-[3/4]" : "aspect-square"
-                }`}
+                className="group relative block overflow-hidden rounded-xl aspect-square"
               >
                 <Image
                   src={image.src}
