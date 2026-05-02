@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { 
@@ -9,10 +9,9 @@ import {
   FolderKanban, 
   Images, 
   LogOut,
-  Home,
-  Settings
+  Home
 } from "lucide-react"
-import { logout } from "@/lib/actions"
+import { useAuth } from "@/lib/auth-context"
 
 const navItems = [
   {
@@ -34,11 +33,10 @@ const navItems = [
 
 export function AdminSidebar() {
   const pathname = usePathname()
-  const router = useRouter()
+  const { logout } = useAuth()
 
-  const handleLogout = async () => {
-    await logout()
-    router.push("/admin")
+  const handleLogout = () => {
+    logout()
   }
 
   return (

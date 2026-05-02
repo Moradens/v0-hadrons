@@ -1,4 +1,5 @@
 import { Metadata } from "next"
+import { AuthProvider } from "@/lib/auth-context"
 
 export const metadata: Metadata = {
   title: {
@@ -18,8 +19,10 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-stone-50">
-      {children}
-    </div>
+    <AuthProvider>
+      <div className="min-h-screen bg-stone-50">
+        {children}
+      </div>
+    </AuthProvider>
   )
 }

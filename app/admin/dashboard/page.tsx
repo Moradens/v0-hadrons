@@ -1,27 +1,45 @@
-import { redirect } from "next/navigation"
-import { cookies } from "next/headers"
+"use client"
+
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { getProjects, getGalleryImages } from "@/lib/actions"
+import { useAuth } from "@/lib/auth-context"
 import { AdminSidebar } from "@/components/admin/admin-sidebar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { FolderKanban, Images, ArrowRight, Plus } from "lucide-react"
 
-export default async function DashboardPage() {
-  const cookieStore = await cookies()
-  const isAuthenticated = cookieStore.get("admin_session")?.value === "authenticated"
+export default function DashboardPage() {
+  const router = useRouter()
+  const { isAuthenticated, isLoading } = useAuth()
 
-  if (!isAuthenticated) {
-    redirect("/admin")
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push("/admin")
+    }
+  }, [isAuthenticated, isLoading, router])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Spinner className="w-8 h-8" />
+      </div>
+    )
   }
 
-  const projects = await getProjects()
-  const galleryImages = await getGalleryImages()
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Spinner className="w-8 h-8" />
+      </div>
+    )
+  }
 
   const stats = [
     {
       title: "Projekty",
-      value: projects.length,
+      value: 8,
       description: "Celkem v galerii",
       icon: FolderKanban,
       href: "/admin/projekty",
@@ -29,7 +47,7 @@ export default async function DashboardPage() {
     },
     {
       title: "Fotky na homepage",
-      value: galleryImages.length,
+      value: 6,
       description: "V sekci portfolio",
       icon: Images,
       href: "/admin/galerie",
@@ -45,7 +63,7 @@ export default async function DashboardPage() {
         <header className="bg-white border-b border-border px-8 py-6">
           <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
           <p className="text-muted-foreground mt-1">
-            Vítejte v administraci webu Hadrons
+            Vitejte v administraci webu Hadrons
           </p>
         </header>
 
@@ -78,20 +96,20 @@ export default async function DashboardPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Rychlé akce</CardTitle>
-              <CardDescription>Často používané operace</CardDescription>
+              <CardTitle>Rychle akce</CardTitle>
+              <CardDescription>Casto pouzivane operace</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-3">
               <Button asChild>
-                <Link href="/admin/projekty?action=new">
+                <Link href="/admin/projekty">
                   <Plus className="w-4 h-4 mr-2" />
-                  Nový projekt
+                  Novy projekt
                 </Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link href="/admin/galerie?action=new">
+                <Link href="/admin/galerie">
                   <Plus className="w-4 h-4 mr-2" />
-                  Přidat fotku na homepage
+                  Pridat fotku na homepage
                 </Link>
               </Button>
               <Button variant="outline" asChild>
@@ -99,43 +117,6 @@ export default async function DashboardPage() {
                   Zobrazit web
                 </Link>
               </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>Poslední projekty</CardTitle>
-              <CardDescription>Nedávno přidané nebo upravené</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {projects.length === 0 ? (
-                <p className="text-muted-foreground text-sm">Zatím nemáte žádné projekty.</p>
-              ) : (
-                <div className="space-y-3">
-                  {projects.slice(0, 5).map((project) => (
-                    <div
-                      key={project.id}
-                      className="flex items-center justify-between p-3 rounded-lg bg-stone-50 hover:bg-stone-100 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="w-12 h-12 rounded-lg bg-cover bg-center"
-                          style={{ backgroundImage: `url(${project.image})` }}
-                        />
-                        <div>
-                          <h4 className="font-medium text-sm text-foreground">{project.title}</h4>
-                          <p className="text-xs text-muted-foreground">{project.category}</p>
-                        </div>
-                      </div>
-                      <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/admin/projekty?edit=${project.id}`}>
-                          Upravit
-                        </Link>
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
             </CardContent>
           </Card>
         </div>

@@ -1,67 +1,68 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
-import { AlertCircle, Lock } from "lucide-react"
+import { AlertCircle, Lock, Mail } from "lucide-react"
+import { useAuth } from "@/lib/auth-context"
 
 export default function AdminLoginPage() {
   const router = useRouter()
+  const { isAuthenticated, isLoading: authLoading, login } = useAuth()
 
+  const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      router.push("/admin/dashboard")
+    }
+  }, [isAuthenticated, authLoading, router])
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
-    console.log("1. submit běží")
-
-    if (!password.trim()) {
-      console.log("2. heslo je prázdné")
-      setError("Zadejte heslo")
+    
+    if (!email.trim() || !password.trim()) {
+      setError("Vyplňte email a heslo")
       return
     }
 
     setError("")
     setIsLoading(true)
 
-    try {
-      console.log("3. posílám request na /api/admin/login")
+    const result = await login(email, password)
 
-      const response = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ password }),
-      })
-
-      console.log("4. status:", response.status)
-
-      const data = await response.json()
-      console.log("5. data:", data)
-
-      if (!response.ok || !data.success) {
-        console.log("6. login neprošel")
-        setError(data.error || "Přihlášení selhalo")
-        return
-      }
-
-      console.log("7. login OK, jdu na dashboard")
+    if (result.success) {
       router.push("/admin/dashboard")
-      router.refresh()
-    } catch (error) {
-      console.error("8. chyba ve fetch:", error)
-      setError("Při přihlašování došlo k chybě")
-    } finally {
+    } else {
+      setError(result.error || "Přihlášení selhalo")
       setIsLoading(false)
     }
+  }
+
+  // Show loading while checking auth
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Spinner className="w-8 h-8" />
+      </div>
+    )
+  }
+
+  // Don't render login form if already authenticated
+  if (isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Spinner className="w-8 h-8" />
+      </div>
+    )
   }
 
   return (
@@ -86,6 +87,24 @@ export default function AdminLoginPage() {
                 <span>{error}</span>
               </div>
             )}
+
+            <Field>
+              <FieldLabel htmlFor="email">Email</FieldLabel>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@hadrons.cz"
+                  className="pl-10"
+                  autoComplete="email"
+                  disabled={isLoading}
+                  required
+                />
+              </div>
+            </Field>
 
             <Field>
               <FieldLabel htmlFor="password">Heslo</FieldLabel>
