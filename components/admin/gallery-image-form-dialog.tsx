@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -14,8 +13,9 @@ import {
 } from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
-import { createGalleryImage, updateGalleryImage } from "@/lib/actions"
-import type { GalleryImage } from "@/lib/types"
+import { Upload, X } from "lucide-react"
+import { useDataStore } from "@/lib/client-store"
+import type { GalleryImage } from "@/lib/client-store"
 
 interface GalleryImageFormDialogProps {
   open: boolean
@@ -30,12 +30,13 @@ export function GalleryImageFormDialog({
   image,
   nextOrder,
 }: GalleryImageFormDialogProps) {
-  const router = useRouter()
+  const { addGalleryImage, updateGalleryImage } = useDataStore()
   const [isLoading, setIsLoading] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState("")
   const [formData, setFormData] = useState({
-    src: "",
-    alt: "",
+    url: "",
+    title: "",
     order: nextOrder,
   })
 
@@ -44,19 +45,51 @@ export function GalleryImageFormDialog({
   useEffect(() => {
     if (image) {
       setFormData({
-        src: image.src,
-        alt: image.alt,
+        url: image.url,
+        title: image.title,
         order: image.order,
       })
     } else {
       setFormData({
-        src: "",
-        alt: "",
+        url: "",
+        title: "",
         order: nextOrder,
       })
     }
     setError("")
   }, [image, open, nextOrder])
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    setError("")
+
+    try {
+      const formDataToSend = new FormData()
+      formDataToSend.append("file", file)
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formDataToSend,
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        setError(data.error || "Chyba při nahrávání souboru")
+        return
+      }
+
+      const data = await response.json()
+      setFormData((prev) => ({ ...prev, url: data.url }))
+    } catch (err) {
+      setError("Chyba při nahrávání obrázku")
+      console.error(err)
+    } finally {
+      setIsUploading(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -64,16 +97,27 @@ export function GalleryImageFormDialog({
     setError("")
 
     try {
-      const result = isEditing
-        ? await updateGalleryImage(image.id, formData)
-        : await createGalleryImage(formData)
-
-      if (result.success) {
-        onOpenChange(false)
-        router.refresh()
-      } else {
-        setError(result.error || "Nastala chyba")
+      if (!formData.url || !formData.title) {
+        setError("Vyplňte všechna povinná pole")
+        setIsLoading(false)
+        return
       }
+
+      if (isEditing && image) {
+        updateGalleryImage(image.id, {
+          url: formData.url,
+          title: formData.title,
+          order: formData.order,
+        })
+      } else {
+        addGalleryImage({
+          url: formData.url,
+          title: formData.title,
+          order: formData.order,
+        })
+      }
+
+      onOpenChange(false)
     } catch (err) {
       setError("Nastala neočekávaná chyba")
     } finally {
@@ -103,45 +147,63 @@ export function GalleryImageFormDialog({
               </div>
             )}
 
+            {/* File Upload */}
             <Field>
-              <FieldLabel htmlFor="src">URL obrázku *</FieldLabel>
-              <Input
-                id="src"
-                type="url"
-                value={formData.src}
-                onChange={(e) =>
-                  setFormData({ ...formData, src: e.target.value })
-                }
-                placeholder="https://..."
-                required
-              />
-              {formData.src && (
-                <div className="mt-2 rounded-lg overflow-hidden border border-border">
-                  <img
-                    src={formData.src}
-                    alt="Náhled"
-                    className="w-full h-40 object-cover"
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none"
-                    }}
-                  />
+              <FieldLabel>Nahrát obrázek</FieldLabel>
+              <label className="flex items-center justify-center w-full p-6 border-2 border-dashed border-primary rounded-lg cursor-pointer hover:bg-primary/5 transition-colors">
+                <div className="flex flex-col items-center">
+                  {isUploading ? (
+                    <Spinner className="w-8 h-8" />
+                  ) : (
+                    <Upload className="w-8 h-8 text-primary mb-2" />
+                  )}
+                  <span className="text-sm font-medium text-foreground">
+                    {isUploading ? "Nahrávám..." : "Klikněte pro výběr obrázku"}
+                  </span>
                 </div>
-              )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  disabled={isUploading}
+                  className="hidden"
+                />
+              </label>
             </Field>
 
+            {/* Preview */}
+            {formData.url && (
+              <div className="relative rounded-lg overflow-hidden border border-border">
+                <img
+                  src={formData.url}
+                  alt="Náhled"
+                  className="w-full h-40 object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => setFormData((prev) => ({ ...prev, url: "" }))}
+                  className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 p-1.5 rounded"
+                >
+                  <X className="w-4 h-4 text-white" />
+                </button>
+              </div>
+            )}
+
+            {/* Title */}
             <Field>
-              <FieldLabel htmlFor="alt">Popisek (alt text) *</FieldLabel>
+              <FieldLabel htmlFor="title">Popis fotky *</FieldLabel>
               <Input
-                id="alt"
-                value={formData.alt}
+                id="title"
+                value={formData.title}
                 onChange={(e) =>
-                  setFormData({ ...formData, alt: e.target.value })
+                  setFormData({ ...formData, title: e.target.value })
                 }
-                placeholder="Např. Rekonstrukce koupelny"
+                placeholder="Např. Rekonstrukce fasády"
                 required
               />
             </Field>
 
+            {/* Order */}
             <Field>
               <FieldLabel htmlFor="order">Pořadí</FieldLabel>
               <Input
@@ -164,11 +226,11 @@ export function GalleryImageFormDialog({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              disabled={isLoading}
+              disabled={isLoading || isUploading}
             >
               Zrušit
             </Button>
-            <Button type="submit" disabled={isLoading}>
+            <Button type="submit" disabled={isLoading || isUploading}>
               {isLoading ? (
                 <>
                   <Spinner className="mr-2" />

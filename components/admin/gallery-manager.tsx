@@ -1,23 +1,18 @@
 "use client"
 
 import { useState } from "react"
-import { useSearchParams } from "next/navigation"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Plus, Trash2, GripVertical, Image as ImageIcon } from "lucide-react"
+import { Plus, Trash2, Image as ImageIcon } from "lucide-react"
 import { GalleryImageFormDialog } from "./gallery-image-form-dialog"
 import { DeleteDialog } from "./delete-dialog"
-import { deleteGalleryImage } from "@/lib/actions"
-import type { GalleryImage } from "@/lib/types"
+import { useDataStore } from "@/lib/client-store"
+import type { GalleryImage } from "@/lib/client-store"
 
-interface GalleryManagerProps {
-  images: GalleryImage[]
-}
-
-export function GalleryManager({ images }: GalleryManagerProps) {
-  const searchParams = useSearchParams()
-  const [isFormOpen, setIsFormOpen] = useState(searchParams.get("action") === "new")
+export function GalleryManager() {
+  const { galleryImages, deleteGalleryImage } = useDataStore()
+  const [isFormOpen, setIsFormOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null)
 
@@ -36,6 +31,8 @@ export function GalleryManager({ images }: GalleryManagerProps) {
     setIsFormOpen(true)
   }
 
+  const sortedImages = [...galleryImages].sort((a, b) => a.order - b.order)
+
   return (
     <>
       <Card>
@@ -52,7 +49,7 @@ export function GalleryManager({ images }: GalleryManagerProps) {
           </Button>
         </CardHeader>
         <CardContent>
-          {images.length === 0 ? (
+          {sortedImages.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <ImageIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p>Žádné fotky v galerii</p>
@@ -63,14 +60,14 @@ export function GalleryManager({ images }: GalleryManagerProps) {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {images.map((image) => (
+              {sortedImages.map((image) => (
                 <div
                   key={image.id}
                   className="group relative aspect-square rounded-lg overflow-hidden border border-border bg-stone-100"
                 >
                   <Image
-                    src={image.src}
-                    alt={image.alt}
+                    src={image.url}
+                    alt={image.title}
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
@@ -104,7 +101,7 @@ export function GalleryManager({ images }: GalleryManagerProps) {
           )}
 
           <p className="text-sm text-muted-foreground mt-6">
-            Celkem {images.length} fot{images.length === 1 ? "ka" : images.length < 5 ? "ky" : "ek"}
+            Celkem {sortedImages.length} fot{sortedImages.length === 1 ? "ka" : sortedImages.length < 5 ? "ky" : "ek"}
           </p>
         </CardContent>
       </Card>
@@ -114,7 +111,7 @@ export function GalleryManager({ images }: GalleryManagerProps) {
         open={isFormOpen}
         onOpenChange={setIsFormOpen}
         image={selectedImage}
-        nextOrder={images.length + 1}
+        nextOrder={sortedImages.length + 1}
       />
 
       {/* Delete Dialog */}
@@ -123,7 +120,11 @@ export function GalleryManager({ images }: GalleryManagerProps) {
         onOpenChange={setIsDeleteOpen}
         title="Smazat fotku"
         description={`Opravdu chcete smazat tuto fotku z galerie? Tato akce je nevratná.`}
-        onDelete={() => deleteGalleryImage(selectedImage?.id || "")}
+        onDelete={() => {
+          if (selectedImage) {
+            deleteGalleryImage(selectedImage.id)
+          }
+        }}
       />
     </>
   )
