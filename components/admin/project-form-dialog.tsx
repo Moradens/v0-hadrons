@@ -72,6 +72,7 @@ export function ProjectFormDialog({
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
+    console.log("[v0] File selected:", file)
     if (!file) return
 
     setIsUploading(true)
@@ -81,20 +82,26 @@ export function ProjectFormDialog({
       const formDataToSend = new FormData()
       formDataToSend.append("file", file)
 
+      console.log("[v0] Uploading file:", file.name, file.size)
       const response = await fetch("/api/upload", {
         method: "POST",
         body: formDataToSend,
       })
 
+      console.log("[v0] Upload response status:", response.status)
+      
       if (!response.ok) {
         const data = await response.json()
+        console.log("[v0] Upload error:", data)
         setError(data.error || "Chyba při nahrávání souboru")
         return
       }
 
       const data = await response.json()
+      console.log("[v0] Upload success:", data)
       setFormData((prev) => ({ ...prev, imageUrl: data.url }))
     } catch (err) {
+      console.error("[v0] Upload exception:", err)
       setError("Chyba při nahrávání obrázku")
     } finally {
       setIsUploading(false)
