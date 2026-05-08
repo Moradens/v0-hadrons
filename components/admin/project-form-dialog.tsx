@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -22,8 +21,9 @@ import {
 } from "@/components/ui/select"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
-import { createProject, updateProject } from "@/lib/actions"
-import type { Project } from "@/lib/types"
+import { Upload, X } from "lucide-react"
+import { useDataStore } from "@/lib/client-store"
+import type { Project } from "@/lib/client-store"
 
 interface ProjectFormDialogProps {
   open: boolean
@@ -38,14 +38,15 @@ export function ProjectFormDialog({
   project,
   categories,
 }: ProjectFormDialogProps) {
-  const router = useRouter()
+  const { addProject, updateProject } = useDataStore()
   const [isLoading, setIsLoading] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState("")
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     category: "",
-    image: "",
+    imageUrl: "",
   })
 
   const isEditing = !!project
@@ -56,18 +57,49 @@ export function ProjectFormDialog({
         title: project.title,
         description: project.description,
         category: project.category,
-        image: project.image,
+        imageUrl: project.imageUrl,
       })
     } else {
       setFormData({
         title: "",
         description: "",
         category: "",
-        image: "",
+        imageUrl: "",
       })
     }
     setError("")
   }, [project, open])
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    setError("")
+
+    try {
+      const formDataToSend = new FormData()
+      formDataToSend.append("file", file)
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formDataToSend,
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        setError(data.error || "Chyba při nahrávání souboru")
+        return
+      }
+
+      const data = await response.json()
+      setFormData((prev) => ({ ...prev, imageUrl: data.url }))
+    } catch (err) {
+      setError("Chyba při nahrávání obrázku")
+    } finally {
+      setIsUploading(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -75,16 +107,19 @@ export function ProjectFormDialog({
     setError("")
 
     try {
-      const result = isEditing
-        ? await updateProject(project.id, formData)
-        : await createProject(formData)
-
-      if (result.success) {
-        onOpenChange(false)
-        router.refresh()
-      } else {
-        setError(result.error || "Nastala chyba")
+      if (!formData.title || !formData.category || !formData.imageUrl) {
+        setError("Vyplňte všechna povinná pole")
+        setIsLoading(false)
+        return
       }
+
+      if (isEditing && project) {
+        updateProject(project.id, formData)
+      } else {
+        addProject(formData)
+      }
+
+      onOpenChange(false)
     } catch (err) {
       setError("Nastala neočekávaná chyba")
     } finally {
@@ -150,7 +185,7 @@ export function ProjectFormDialog({
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="description">Popis *</FieldLabel>
+              <FieldLabel htmlFor="description">Popis</FieldLabel>
               <Textarea
                 id="description"
                 value={formData.description}
@@ -159,35 +194,50 @@ export function ProjectFormDialog({
                 }
                 placeholder="Krátký popis projektu..."
                 rows={3}
-                required
               />
             </Field>
 
+            {/* File Upload */}
             <Field>
-              <FieldLabel htmlFor="image">URL obrázku *</FieldLabel>
-              <Input
-                id="image"
-                type="url"
-                value={formData.image}
-                onChange={(e) =>
-                  setFormData({ ...formData, image: e.target.value })
-                }
-                placeholder="https://..."
-                required
-              />
-              {formData.image && (
-                <div className="mt-2 rounded-lg overflow-hidden border border-border">
-                  <img
-                    src={formData.image}
-                    alt="Náhled"
-                    className="w-full h-32 object-cover"
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none"
-                    }}
-                  />
+              <FieldLabel>Obrázek projektu *</FieldLabel>
+              <label className="flex items-center justify-center w-full p-6 border-2 border-dashed border-primary rounded-lg cursor-pointer hover:bg-primary/5 transition-colors">
+                <div className="flex flex-col items-center">
+                  {isUploading ? (
+                    <Spinner className="w-8 h-8" />
+                  ) : (
+                    <Upload className="w-8 h-8 text-primary mb-2" />
+                  )}
+                  <span className="text-sm font-medium text-foreground">
+                    {isUploading ? "Nahrávám..." : "Klikněte pro výběr obrázku"}
+                  </span>
                 </div>
-              )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  disabled={isUploading}
+                  className="hidden"
+                />
+              </label>
             </Field>
+
+            {/* Preview */}
+            {formData.imageUrl && (
+              <div className="relative rounded-lg overflow-hidden border border-border">
+                <img
+                  src={formData.imageUrl}
+                  alt="Náhled"
+                  className="w-full h-32 object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => setFormData((prev) => ({ ...prev, imageUrl: "" }))}
+                  className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 p-1.5 rounded"
+                >
+                  <X className="w-4 h-4 text-white" />
+                </button>
+              </div>
+            )}
           </div>
 
           <DialogFooter>
@@ -195,11 +245,11 @@ export function ProjectFormDialog({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              disabled={isLoading}
+              disabled={isLoading || isUploading}
             >
               Zrušit
             </Button>
-            <Button type="submit" disabled={isLoading}>
+            <Button type="submit" disabled={isLoading || isUploading}>
               {isLoading ? (
                 <>
                   <Spinner className="mr-2" />

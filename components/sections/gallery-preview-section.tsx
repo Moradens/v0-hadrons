@@ -7,40 +7,11 @@ import { Button } from "@/components/ui/button"
 import { FadeIn } from "@/components/fade-in"
 import { useDataStore } from "@/lib/client-store"
 
-const defaultImages = [
-  {
-    url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Fasa%CC%81da%20mala%CC%81%20%281%29.JPG-KliQxH74YnLzcHelef7Mio8zcjiVSw.jpeg",
-    title: "Dokončená fasáda",
-  },
-  {
-    url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Facade%20Reference.JPG-6e9XsWCAjC4Ng8voVXAYZaD4dd0I42.jpeg",
-    title: "Rekonstrukce domu",
-  },
-  {
-    url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/BD%20Image.JPG-x8HhGMXVLYo0QyVOh68evezkwekngu.jpeg",
-    title: "LED osvětlení",
-  },
-  {
-    url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Old%202.1.JPG-BpRHveFh5HD4MZmgEc0EiZt9lvAHp0.jpeg",
-    title: "Elektroinstalace",
-  },
-  {
-    url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/RD%20Image%204.JPG-dVGuXzVTpwJIu57aVvx0TRJj5r5mwk.jpeg",
-    title: "Rekonstrukce podkroví",
-  },
-  {
-    url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Ke%20Krc%CC%8Ci%20Seka%CC%81ni%CC%81%20a%20Zac%CC%8Cis%CC%8Cte%CC%8Cni%CC%81-PKe6rsziMKaLNzRr9isizS0eEmjAGk.jpeg",
-    title: "Elektroinstalace bytového domu",
-  },
-]
-
 export function GalleryPreviewSection() {
   const galleryImages = useDataStore((state) => state.galleryImages)
   
-  // Use admin gallery if exists, otherwise use defaults
-  const displayImages = galleryImages.length > 0 
-    ? [...galleryImages].sort((a, b) => a.order - b.order).slice(0, 6)
-    : defaultImages
+  // Sort by order and take first 6
+  const displayImages = [...galleryImages].sort((a, b) => a.order - b.order).slice(0, 6)
 
   return (
     <section className="py-20 lg:py-28 bg-stone-900 relative overflow-hidden">
@@ -70,7 +41,7 @@ export function GalleryPreviewSection() {
         {/* Gallery Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 lg:gap-4">
           {displayImages.map((image, index) => (
-            <FadeIn key={image.url || image.title} delay={index * 50}>
+            <FadeIn key={image.id} delay={index * 50}>
               <Link 
                 href="/galerie"
                 className="group relative block overflow-hidden rounded-xl aspect-square"

@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -17,8 +16,8 @@ import { Badge } from "@/components/ui/badge"
 import { Plus, Pencil, Trash2, Search, Image as ImageIcon } from "lucide-react"
 import { ProjectFormDialog } from "./project-form-dialog"
 import { DeleteDialog } from "./delete-dialog"
-import { deleteProject } from "@/lib/actions"
-import type { Project } from "@/lib/types"
+import { useDataStore } from "@/lib/client-store"
+import type { Project } from "@/lib/client-store"
 
 interface ProjectsTableProps {
   projects: Project[]
@@ -26,9 +25,9 @@ interface ProjectsTableProps {
 }
 
 export function ProjectsTable({ projects, categories }: ProjectsTableProps) {
-  const searchParams = useSearchParams()
+  const { deleteProject } = useDataStore()
   const [searchQuery, setSearchQuery] = useState("")
-  const [isFormOpen, setIsFormOpen] = useState(searchParams.get("action") === "new")
+  const [isFormOpen, setIsFormOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
 
@@ -103,7 +102,7 @@ export function ProjectsTable({ projects, categories }: ProjectsTableProps) {
                       <TableCell>
                         <div
                           className="w-12 h-12 rounded-lg bg-cover bg-center border border-border"
-                          style={{ backgroundImage: `url(${project.image})` }}
+                          style={{ backgroundImage: `url(${project.imageUrl})` }}
                         />
                       </TableCell>
                       <TableCell className="font-medium">
@@ -161,7 +160,11 @@ export function ProjectsTable({ projects, categories }: ProjectsTableProps) {
         onOpenChange={setIsDeleteOpen}
         title="Smazat projekt"
         description={`Opravdu chcete smazat projekt "${selectedProject?.title}"? Tato akce je nevratná.`}
-        onDelete={() => deleteProject(selectedProject?.id || "")}
+        onDelete={() => {
+          if (selectedProject) {
+            deleteProject(selectedProject.id)
+          }
+        }}
       />
     </>
   )
