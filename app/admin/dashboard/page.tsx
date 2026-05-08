@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
+import { useDataStore } from "@/lib/client-store"
 import { AdminSidebar } from "@/components/admin/admin-sidebar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -13,6 +14,8 @@ import { FolderKanban, Images, ArrowRight, Plus } from "lucide-react"
 export default function DashboardPage() {
   const router = useRouter()
   const { isAuthenticated, isLoading } = useAuth()
+  const projects = useDataStore((state) => state.projects)
+  const galleryImages = useDataStore((state) => state.galleryImages)
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -39,7 +42,7 @@ export default function DashboardPage() {
   const stats = [
     {
       title: "Projekty",
-      value: 8,
+      value: projects.length,
       description: "Celkem v galerii",
       icon: FolderKanban,
       href: "/admin/projekty",
@@ -47,7 +50,7 @@ export default function DashboardPage() {
     },
     {
       title: "Fotky na homepage",
-      value: 6,
+      value: galleryImages.length,
       description: "V sekci portfolio",
       icon: Images,
       href: "/admin/galerie",
