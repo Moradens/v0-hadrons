@@ -91,6 +91,14 @@ export const useDataStore = create<DataStore>()(
     }),
     {
       name: 'hadrons-data-store',
+      onRehydrateStorage: () => (state) => {
+        // Hydration complete
+        if (state) {
+          console.log('[v0] Store hydrated:', state)
+        }
+      },
     }
   )
 )
+
+

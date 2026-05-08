@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -15,6 +15,12 @@ export function GalleryManager() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null)
+  const [isHydrated, setIsHydrated] = useState(false)
+
+  useEffect(() => {
+    // Zustand persist middleware hydrates on client mount
+    setIsHydrated(true)
+  }, [])
 
   const handleEdit = (image: GalleryImage) => {
     setSelectedImage(image)
@@ -32,6 +38,16 @@ export function GalleryManager() {
   }
 
   const sortedImages = [...galleryImages].sort((a, b) => a.order - b.order)
+
+  if (!isHydrated) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-12">
+          <div className="text-muted-foreground">Načítám...</div>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <>

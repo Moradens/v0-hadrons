@@ -1,23 +1,24 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
+import { useDataStore } from "@/lib/client-store"
 import { AdminSidebar } from "@/components/admin/admin-sidebar"
 import { ProjectsTable } from "@/components/admin/projects-table"
 import { Spinner } from "@/components/ui/spinner"
 
-// Mock data for now
-const mockProjects = [
-  { id: "1", title: "Rekonstrukce RD Praha", category: "Kompletni rekonstrukce", description: "Kompletni rekonstrukce rodinneho domu", image: "/images/project1.jpg" },
-  { id: "2", title: "Fasada bytoveho domu", category: "Fasady", description: "Nova fasada a zatepleni", image: "/images/project2.jpg" },
-]
-
-const categories = ["Kompletni rekonstrukce", "Fasady", "Elektromontaze", "Sadrokartony", "Zednicke prace"]
+const categories = ["Kompletní rekonstrukce", "Fasády", "Elektromontáže", "Sádrokartony", "Zednické práce"]
 
 export default function ProjectsPage() {
   const router = useRouter()
   const { isAuthenticated, isLoading } = useAuth()
+  const projects = useDataStore((state) => state.projects)
+  const [isHydrated, setIsHydrated] = useState(false)
+
+  useEffect(() => {
+    setIsHydrated(true)
+  }, [])
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -25,7 +26,7 @@ export default function ProjectsPage() {
     }
   }, [isAuthenticated, isLoading, router])
 
-  if (isLoading || !isAuthenticated) {
+  if (isLoading || !isAuthenticated || !isHydrated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Spinner className="w-8 h-8" />
@@ -41,12 +42,12 @@ export default function ProjectsPage() {
         <header className="bg-white border-b border-border px-8 py-6">
           <h1 className="text-2xl font-semibold text-foreground">Projekty</h1>
           <p className="text-muted-foreground mt-1">
-            Spravujte projekty zobrazene v galerii
+            Spravujte projekty v administraci
           </p>
         </header>
 
         <div className="p-8">
-          <ProjectsTable projects={mockProjects} categories={categories} />
+          <ProjectsTable projects={projects} categories={categories} />
         </div>
       </main>
     </div>
