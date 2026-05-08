@@ -2,27 +2,23 @@ import { put, del } from '@vercel/blob'
 import { type NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
-  console.log("[v0] Upload API called")
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File
 
-    console.log("[v0] File received:", file?.name, file?.size)
-
     if (!file) {
-      console.log("[v0] No file in request")
       return NextResponse.json({ error: 'Žádný soubor' }, { status: 400 })
     }
 
-    console.log("[v0] Uploading to Vercel Blob...")
     const blob = await put(file.name, file, {
-      access: 'public',
+      access: 'private',
     })
 
-    console.log("[v0] Upload success:", blob.url)
-    return NextResponse.json({ url: blob.url, pathname: blob.pathname })
+    // For private blobs, we return a URL that goes through our file serving API
+    const serveUrl = `/api/file?pathname=${encodeURIComponent(blob.pathname)}`
+    return NextResponse.json({ url: serveUrl, pathname: blob.pathname })
   } catch (error) {
-    console.error('[v0] Upload error:', error)
+    console.error('Upload error:', error)
     return NextResponse.json({ error: 'Upload selhal: ' + (error as Error).message }, { status: 500 })
   }
 }
