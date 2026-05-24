@@ -16,7 +16,7 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface Project {
-  id: number
+  id: string | number
   title: string
   category: string
   description: string

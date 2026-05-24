@@ -109,6 +109,9 @@ export function Footer() {
             <Link href="/gdpr" className="hover:text-primary transition-colors">
               Ochrana osobních údajů
             </Link>
+            <Link href="/admin" className="hover:text-primary transition-colors">
+              Administrace
+            </Link>
           </div>
         </div>
       </div>
