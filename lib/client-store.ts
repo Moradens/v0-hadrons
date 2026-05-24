@@ -21,6 +21,9 @@ export interface GalleryImage {
 interface DataStore {
   projects: Project[]
   galleryImages: GalleryImage[]
+  cookiesAccepted: boolean
+  acceptCookies: () => void
+  rejectCookies: () => void
   addProject: (project: Omit<Project, 'id' | 'createdAt'>) => void
   updateProject: (id: string, project: Partial<Project>) => void
   deleteProject: (id: string) => void
@@ -141,6 +144,17 @@ export const useDataStore = create<DataStore>()(
     (set) => ({
       projects: defaultProjects,
       galleryImages: defaultGalleryImages,
+      cookiesAccepted: false,
+
+      acceptCookies: () =>
+        set({
+          cookiesAccepted: true,
+        }),
+
+      rejectCookies: () =>
+        set({
+          cookiesAccepted: false,
+        }),
 
       addProject: (project) =>
         set((state) => ({
