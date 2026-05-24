@@ -6,12 +6,20 @@ import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { FadeIn } from "@/components/fade-in"
 import { useDataStore } from "@/lib/client-store"
+import { useEffect, useState } from "react"
 
 export function GalleryPreviewSection() {
   const galleryImages = useDataStore((state) => state.galleryImages)
-  
+  const [isHydrated, setIsHydrated] = useState(false)
+
+  useEffect(() => {
+    setIsHydrated(true)
+  }, [])
+
   // Sort by order and take first 6
-  const displayImages = [...galleryImages].sort((a, b) => a.order - b.order).slice(0, 6)
+  const displayImages = isHydrated
+    ? [...galleryImages].sort((a, b) => a.order - b.order).slice(0, 6)
+    : []
 
   return (
     <section className="py-20 lg:py-28 bg-stone-900 relative overflow-hidden">
